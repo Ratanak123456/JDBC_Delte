@@ -1,0 +1,48 @@
+package co.istad.jdbc.service;
+
+import co.istad.jdbc.dao.ProductDao;
+import co.istad.jdbc.dao.ProductDaoImpl;
+import co.istad.jdbc.model.Product;
+
+import java.sql.SQLException;
+import java.util.List;
+
+public class ProductServiceImpl implements ProductService {
+
+    private final ProductDao productDao;
+
+    public ProductServiceImpl() {
+        productDao = new ProductDaoImpl();
+    }
+
+    @Override
+    public void save(Product product) {
+        try {
+            int affectedRow = productDao.save(product);
+            if (affectedRow < 1)
+                throw new RuntimeException("Save operation failed");
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void delete(Product product) {
+        try {
+            int affectedRow = productDao.delete(product);
+            if (affectedRow < 1)
+                throw new RuntimeException("Delete operation failed");
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Product> findAll() {
+        try {
+            return productDao.finAll();
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+}
