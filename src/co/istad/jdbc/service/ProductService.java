@@ -10,7 +10,7 @@ public interface ProductService {
 
     void save(Product product);
 
-    void delete(Product product);
+    void deleteByCode(String code);
 
     List<Product> findAll();
 }

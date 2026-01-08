@@ -29,5 +29,5 @@ public interface ProductDao {
 
     List<Product> finAll() throws SQLException;
 
-    int delete(Product product) throws SQLException;
+    int deleteByCode(String code) throws SQLException;
 }

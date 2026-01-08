@@ -40,22 +40,22 @@ public class ProductDaoImpl implements ProductDao {
             product.setDelete(rs.getBoolean("is_deleted"));
             productList.add(product);
         }
+
+
         return productList;
     }
 
     // SOFT DELETE
     @Override
-    public int delete(Product product) throws SQLException {
-
+    public int deleteByCode(String code) throws SQLException {
         final String SQL = """
                 DELETE
                 FROM products
-                WHERE id = ?;
+                WHERE code = ?
                 """;
-
-        PreparedStatement ps = conn.prepareStatement(SQL);
-        ps.setInt(1, product.getId());
-        return ps.executeUpdate();
+        PreparedStatement pstmt = conn.prepareStatement(SQL);
+        pstmt.setString(1, code);
+        return pstmt.executeUpdate();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ProductDaoImpl implements ProductDao {
 
         ResultSet rs = pstmt.executeQuery();
         Product product;
-        if(rs.next()) {
+        if (rs.next()) {
             product = new Product();
             product.setId(rs.getInt("id"));
             product.setCode(rs.getString("code"));
@@ -87,6 +87,7 @@ public class ProductDaoImpl implements ProductDao {
 
         return Optional.empty();
     }
+
     @Override
     public boolean existsByCode(String code) throws SQLException {
         // Define SQL
@@ -98,9 +99,12 @@ public class ProductDaoImpl implements ProductDao {
         // Create statement object
         PreparedStatement pstmt = conn.prepareStatement(SQL);
         pstmt.setString(1, code);
-        return pstmt.execute(SQL);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next())
+            return rs.getBoolean("exists");
+        else
+            return false;
     }
-
 
     @Override
     public int updateByCode(String code, Product product) throws SQLException {

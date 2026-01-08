@@ -64,13 +64,21 @@ public class JdbcProgram {
                 }
 
                 case 5 -> {
-                    Integer id = InputUtil.getInteger("Enter Product ID to delete: ");
-
-                    Product product = new Product();
-                    product.setId(id);
-
-                    productService.delete(product);
-                    ViewUtil.printHeader("Product deleted successfully");
+                    ViewUtil.printHeader("Delete product by code");
+                    String code = InputUtil.getText("Enter code: ");
+                    ViewUtil.print("Are you sure to delete?", true);
+                    String confirm = InputUtil.getText("[Y/n]");
+                    if (confirm.equalsIgnoreCase("y")) {
+                        // Call logic from service
+                        try {
+                            productService.deleteByCode(code);
+                            ViewUtil.printHeader("Product deleted successfully");
+                        } catch (RuntimeException e) {
+                            ViewUtil.printHeader(e.getMessage());
+                        }
+                    } else {
+                        ViewUtil.print("Delete cancelled", true);
+                    }
                 }
 
                 default -> ViewUtil.printHeader("Invalid menu");
