@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface ProductService {
 
+    void updateByCode(String code, Product product);
+
     void save(Product product);
 
     void delete(Product product);

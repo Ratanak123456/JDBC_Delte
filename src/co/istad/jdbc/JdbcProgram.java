@@ -44,6 +44,25 @@ public class JdbcProgram {
                     ViewUtil.printHeader("Product saved successfully");
                 }
 
+                case 4 -> {
+                    ViewUtil.printHeader("Update product by code");
+                    String code = InputUtil.getText("Enter code: ");
+                    String name = InputUtil.getText("Enter name: ");
+                    BigDecimal price = InputUtil.getMoney("Enter price: ");
+                    Integer qty = InputUtil.getInteger("Enter qty: ");
+
+                    Product product = new Product();
+                    product.setName(name);
+                    product.setPrice(price);
+                    product.setQty(qty);
+                    try {
+                        productService.updateByCode(code, product);
+                        ViewUtil.printHeader("Product updated successfully..!");
+                    } catch (RuntimeException e) {
+                        ViewUtil.printHeader(e.getMessage());
+                    }
+                }
+
                 case 5 -> {
                     Integer id = InputUtil.getInteger("Enter Product ID to delete: ");
 

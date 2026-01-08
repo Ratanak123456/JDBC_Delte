@@ -6,6 +6,7 @@ import co.istad.jdbc.model.Product;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ProductDaoImpl implements ProductDao {
 
@@ -55,6 +56,69 @@ public class ProductDaoImpl implements ProductDao {
         PreparedStatement ps = conn.prepareStatement(SQL);
         ps.setInt(1, product.getId());
         return ps.executeUpdate();
+    }
+
+    @Override
+    public Optional<Product> findByCode(String code) throws SQLException {
+
+        // Define SQL
+        final String SQL = """
+                SELECT *
+                FROM products
+                WHERE code = ?
+                """;
+
+        // Create statement object
+        PreparedStatement pstmt = conn.prepareStatement(SQL);
+        pstmt.setString(1, code);
+
+        ResultSet rs = pstmt.executeQuery();
+        Product product;
+        if(rs.next()) {
+            product = new Product();
+            product.setId(rs.getInt("id"));
+            product.setCode(rs.getString("code"));
+            product.setName(rs.getString("name"));
+            product.setPrice(rs.getBigDecimal("price"));
+            product.setQty(rs.getInt("qty"));
+            product.setDelete(rs.getBoolean("is_deleted"));
+            return Optional.of(product);
+        }
+
+        return Optional.empty();
+    }
+    @Override
+    public boolean existsByCode(String code) throws SQLException {
+        // Define SQL
+        final String SQL = """
+                SELECT EXISTS(
+                    SELECT code FROM products WHERE code = ?
+                );
+                """;
+        // Create statement object
+        PreparedStatement pstmt = conn.prepareStatement(SQL);
+        pstmt.setString(1, code);
+        return pstmt.execute(SQL);
+    }
+
+
+    @Override
+    public int updateByCode(String code, Product product) throws SQLException {
+        // Define SQL
+        final String SQL = """
+                UPDATE products
+                SET name = ?, price = ?, qty = ?
+                WHERE code = ?
+                """;
+
+        // Create statement object
+        PreparedStatement pstmt = conn.prepareStatement(SQL);
+        pstmt.setString(1, product.getName());
+        pstmt.setBigDecimal(2, product.getPrice());
+        pstmt.setInt(3, product.getQty());
+        pstmt.setString(4, code);
+
+        return pstmt.executeUpdate();
     }
 
     @Override
